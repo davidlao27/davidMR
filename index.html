@@ -65,9 +65,9 @@
         let gyroscope = new Gyroscope({frequency: 60});
 
         gyroscope.addEventListener('reading', e => {
-            cube.rotation.x = THREE.Math.degToRad( gyroscope.x + 90 );
-            cube.rotation.y = THREE.Math.degToRad( gyroscope.y );
-            cube.rotation.z = THREE.Math.degToRad( gyroscope.z );
+            cube.rotation.x = THREE.Math.radToDeg( gyroscope.x + 90 );
+            cube.rotation.y = THREE.Math.radToDeg( gyroscope.y );
+            cube.rotation.z = THREE.Math.radToDeg( gyroscope.z );
         });
 gyroscope.start();
 
