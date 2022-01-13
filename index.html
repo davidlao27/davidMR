@@ -63,6 +63,15 @@
 
         animate();
 
+        let gyroscope = new Gyroscope({frequency: 60});
+
+        gyroscope.addEventListener('reading', e => {
+            camera.rotation.x = THREE.Math.degToRad( gyroscope.x + 90 );
+            camera.rotation.y = THREE.Math.degToRad( gyroscope.y );
+            camera.rotation.z = THREE.Math.degToRad( gyroscope.z );
+        });
+gyroscope.start();
+
         window.addEventListener('resize', onWindowResize, false);
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
