@@ -1,190 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+        <link rel="stylesheet" href="handsfree.css" />
+        <script src="handsfree.js"></script>
 
-<head>
-    <link rel="stylesheet" href="handsfree.css" />
-    <script src="handsfree.js"></script>
+		<title>davidMR</title>
+		<meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+	<body>
 
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>davidMR Demo</title>
-    <link type="text/css" rel="stylesheet" href="main.css">
+		<script type="module">
 
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-    </style>
-</head>
+			import * as THREE from '../build/three.module.js';
 
-<body>
+			import { BoxLineGeometry } from './jsm/geometries/BoxLineGeometry.js';
+			import { VRButton } from './jsm/webxr/VRButton.js';
+			import { XRControllerModelFactory } from './jsm/webxr/XRControllerModelFactory.js';
 
-    <script type="module">
-import * as THREE from './https://raw.githubusercontent.com/davidlao27/davidMR/main/three.module.js';
+			const clock = new THREE.Clock();
 
-import { BoxLineGeometry } from './BoxLineGeometry.js';
-import { VRButton } from './VRButton.js';
-import { XRControllerModelFactory } from './XRControllerModelFactory.js';
+			let container;
+			let camera, scene, raycaster, renderer;
 
-const clock = new THREE.Clock();
+			let room;
 
-let container;
-let camera, scene, raycaster, renderer;
+			let controller, controllerGrip;
+			let INTERSECTED;
+			const tempMatrix = new THREE.Matrix4();
 
-let room;
+			init();
+			animate();
 
-let controller, controllerGrip;
-let INTERSECTED;
-const tempMatrix = new THREE.Matrix4();
+			function init() {
 
-init();
-animate();
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
 
-function init() {
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0x505050 );
 
-    container = document.createElement( 'div' );
-    document.body.appendChild( container );
+				camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10 );
+				camera.position.set( 0, 1.6, 3 );
+				scene.add( camera );
 
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color( 0x505050 );
+				room = new THREE.LineSegments(
+					new BoxLineGeometry( 6, 6, 6, 20, 20, 20 ).translate( 0, 3, 0 ),
+					new THREE.LineBasicMaterial( { color: 0x808080 } )
+				);
+				scene.add( room );
 
-    camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10 );
-    camera.position.set( 0, 1.6, 3 );
-    scene.add( camera );
+                const cube = new THREE.Mesh( new THREE.BoxGeometry( 3.5, 0.2, 2 ), new THREE.MeshStandardMaterial( {color: 0} ) );
+                cube.position.y = 0.5;
+                cube.position.z = -1;
 
-    room = new THREE.LineSegments(
-        new BoxLineGeometry( 6, 6, 6, 10, 10, 10 ).translate( 0, 3, 0 ),
-        new THREE.LineBasicMaterial( { color: 0x808080 } )
-    );
-    scene.add( room );
+                scene.add( cube );
 
-    scene.add( new THREE.HemisphereLight( 0x606060, 0x404040 ) );
+				scene.add( new THREE.HemisphereLight( 0x606060, 0x404040 ) );
 
-    const light = new THREE.DirectionalLight( 0xffffff );
-    light.position.set( 1, 1, 1 ).normalize();
-    scene.add( light );
+				const light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 1, 1, 1 ).normalize();
+				scene.add( light );
 
-    const geometry = new THREE.BoxGeometry( 0.15, 0.15, 0.15 );
+				const geometry = new THREE.BoxGeometry( 0.15, 0.15, 0.15 );
 
-    raycaster = new THREE.Raycaster();
+				raycaster = new THREE.Raycaster();
 
-    renderer = new THREE.WebGLRenderer( { antialias: true } );
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.xr.enabled = true;
-    container.appendChild( renderer.domElement );
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.outputEncoding = THREE.sRGBEncoding;
+				renderer.xr.enabled = true;
+				container.appendChild( renderer.domElement );
 
-    //
+				//
 
-    function onSelectStart() {
+				function onSelectStart() {
 
-        this.userData.isSelecting = true;
+					this.userData.isSelecting = true;
 
-    }
+				}
 
-    function onSelectEnd() {
+				function onSelectEnd() {
 
-        this.userData.isSelecting = false;
+					this.userData.isSelecting = false;
 
-    }
+				}
 
-    controller = renderer.xr.getController( 0 );
-    controller.addEventListener( 'selectstart', onSelectStart );
-    controller.addEventListener( 'selectend', onSelectEnd );
-    controller.addEventListener( 'connected', function ( event ) {
+				controller = renderer.xr.getController( 0 );
+				controller.addEventListener( 'selectstart', onSelectStart );
+				controller.addEventListener( 'selectend', onSelectEnd );
+				controller.addEventListener( 'connected', function ( event ) {
 
-        this.add( buildController( event.data ) );
+					this.add( buildController( event.data ) );
 
-    } );
-    controller.addEventListener( 'disconnected', function () {
+				} );
+				controller.addEventListener( 'disconnected', function () {
 
-        this.remove( this.children[ 0 ] );
+					this.remove( this.children[ 0 ] );
 
-    } );
-    scene.add( controller );
+				} );
+				scene.add( controller );
 
-    const controllerModelFactory = new XRControllerModelFactory();
+				const controllerModelFactory = new XRControllerModelFactory();
 
-    controllerGrip = renderer.xr.getControllerGrip( 0 );
-    controllerGrip.add( controllerModelFactory.createControllerModel( controllerGrip ) );
-    scene.add( controllerGrip );
+				controllerGrip = renderer.xr.getControllerGrip( 0 );
+				controllerGrip.add( controllerModelFactory.createControllerModel( controllerGrip ) );
+				scene.add( controllerGrip );
 
-    window.addEventListener( 'resize', onWindowResize );
+				window.addEventListener( 'resize', onWindowResize );
 
-    //
+				//
 
-    document.body.appendChild( VRButton.createButton( renderer ) );
+				document.body.appendChild( VRButton.createButton( renderer ) );
 
-}
+			}
 
-function buildController( data ) {
+			function buildController( data ) {
 
-    let geometry, material;
+				let geometry, material;
 
-    switch ( data.targetRayMode ) {
+				switch ( data.targetRayMode ) {
 
-        case 'tracked-pointer':
+					case 'tracked-pointer':
 
-            geometry = new THREE.BufferGeometry();
-            geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 1 ], 3 ) );
-            geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.5, 0.5, 0.5, 0, 0, 0 ], 3 ) );
+						geometry = new THREE.BufferGeometry();
+						geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 1 ], 3 ) );
+						geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.5, 0.5, 0.5, 0, 0, 0 ], 3 ) );
 
-            material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending } );
+						material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending } );
 
-            return new THREE.Line( geometry, material );
+						return new THREE.Line( geometry, material );
 
-        case 'gaze':
+					case 'gaze':
 
-            geometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
-            material = new THREE.MeshBasicMaterial( { opacity: 0, transparent: true } );
-            return new THREE.Mesh( geometry, material );
+						geometry = new THREE.RingGeometry( 0, 0, 32 ).translate( 0, 0, - 1 );
+						material = new THREE.MeshBasicMaterial( { opacity: 0, transparent: true } );
+						return new THREE.Mesh( geometry, material );
 
-    }
+				}
 
-}
+			}
 
-function onWindowResize() {
+			function onWindowResize() {
 
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( window.innerWidth, window.innerHeight );
 
-}
+			}
 
-//
+			//
 
-function animate() {
+			function animate() {
 
-    renderer.setAnimationLoop( render );
+				renderer.setAnimationLoop( render );
 
-}
+			}
 
-function render() {
-    renderer.render( scene, camera );
-}
-    </script>
-    <script>
-        const handsfree = new Handsfree({ hands: true })
-        handsfree.start();
+			function render() {
+				renderer.render( scene, camera );
+			}
 
-        // From an event
-        document.addEventListener('handsfree-data', event => {
-            const data = event.detail;
-            if (!data.hands) return
+		</script>
 
-            if (data.hands.landmarksVisible[0] && data.hands.landmarksVisible[1]) {
+        <script>
+            const handsfree = new Handsfree({ hands: true })
+            handsfree.start();
+
+            // From an event
+            document.addEventListener('handsfree-data', event => {
+                const data = event.detail;
+                if (!data.hands) return
                 
+                if (data.hands.landmarksVisible[0] && data.hands.landmarksVisible[1]) {
+            
                 // Left hand, person #1
                 console.log(handsfree.data.hands.landmarks[0]);
+            
                 // Right hand, person #1
                 console.log(handsfree.data.hands.landmarks[1]);
-            }
-        })
-    </script>
-</body>
-
+        }
+    })
+        </script>
+	</body>
 </html>
