@@ -4405,31 +4405,51 @@
           // The canvas element to hold the skeletons and keypoints for weboji model
           $el: null,
           width: 1280,
-          height: 720
+          height: 720,
+
+          facingMode: {
+            exact: 'environment'
+          }
         },
         hands: {
           // The canvas element to hold the skeletons and keypoints for hand model
           $el: null,
           width: 1280,
-          height: 720
+          height: 720,
+
+          facingMode: {
+            exact: 'environment'
+          }
         },
         handpose: {
           // The canvas element to hold the skeletons and keypoints for hand model
           $el: null,
           width: 1280,
-          height: 720
+          height: 720,
+
+          facingMode: {
+            exact: 'environment'
+          }
         },
         pose: {
           // The canvas element to hold the skeletons and keypoints for pose model
           $el: null,
           width: 1280,
-          height: 720
+          height: 720,
+
+          facingMode: {
+            exact: 'environment'
+          }
         },
         facemesh: {
           // The canvas element to hold the skeletons and keypoints for facemesh model
           $el: null,
           width: 1280,
-          height: 720
+          height: 720,
+
+          facingMode: {
+            exact: 'environment'
+          }
         }
       },
       // The video source to use. 
@@ -4440,7 +4460,11 @@
         // The video element to hold the webcam stream
         $el: null,
         width: 1280,
-        height: 720
+        height: 720,
+
+        facingMode: {
+          exact: 'environment'
+        }
       },
       // The wrapping element
       wrap: {
