@@ -9,9 +9,28 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<link type="text/css" rel="stylesheet" href="main.css">
+
+		<style>
+			.container {
+  				display: flex;
+			}
+
+			.container div {
+				flex: 1;
+			}
+
+			body {
+				overflow: hidden;
+			}
+		</style>
 	</head>
 	<body>
-
+		<img src="helmet.png", width="100%" height="115%" style="z-index: 100; position: absolute; top: -7.5%;">
+		<div class="container">
+			<div id="leye"></div>
+			<div id="reye"></div>
+		</div>
+			
 		<script type="module">
 
 			import * as THREE from './three.module.js';
@@ -22,8 +41,8 @@
 
 			const clock = new THREE.Clock();
 
-			let container;
-			let camera, scene, raycaster, renderer;
+			let container, container2;
+			let camera, scene, raycaster, renderer, renderer2;
 
 			let room;
 
@@ -36,8 +55,8 @@
 
 			function init() {
 
-				container = document.createElement( 'div' );
-				document.body.appendChild( container );
+				container = document.getElementById("leye");
+				container2 = document.getElementById("reye");
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x505050 );
@@ -88,7 +107,7 @@
 
 function deviceOrientationHandler(tiltX, tiltY){
 
-      camera.rotation.x = (THREE.MathUtils.degToRad(tiltX)+85)*-1;
+      camera.rotation.x = (THREE.MathUtils.degToRad(tiltX)+80)*-1;
       camera.rotation.y = THREE.MathUtils.degToRad(tiltY);
 }
 
@@ -129,99 +148,42 @@ function deviceOrientationHandler(tiltX, tiltY){
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( window.innerWidth/2, window.innerHeight );
 				renderer.outputEncoding = THREE.sRGBEncoding;
 				renderer.xr.enabled = true;
 				container.appendChild( renderer.domElement );
 
-				//
+				renderer2 = new THREE.WebGLRenderer( { antialias: true } );
+				renderer2.setPixelRatio( window.devicePixelRatio );
+				renderer2.setSize( window.innerWidth/2, window.innerHeight );
+				renderer2.outputEncoding = THREE.sRGBEncoding;
+				renderer2.xr.enabled = true;
+				container2.appendChild( renderer2.domElement );
 
-				function onSelectStart() {
-
-					this.userData.isSelecting = true;
-
-				}
-
-				function onSelectEnd() {
-
-					this.userData.isSelecting = false;
-
-				}
-
-				controller = renderer.xr.getController( 0 );
-				controller.addEventListener( 'selectstart', onSelectStart );
-				controller.addEventListener( 'selectend', onSelectEnd );
-				controller.addEventListener( 'connected', function ( event ) {
-
-					this.add( buildController( event.data ) );
-
-				} );
-				controller.addEventListener( 'disconnected', function () {
-
-					this.remove( this.children[ 0 ] );
-
-				} );
-				scene.add( controller );
-
-				const controllerModelFactory = new XRControllerModelFactory();
-
-				controllerGrip = renderer.xr.getControllerGrip( 0 );
-				controllerGrip.add( controllerModelFactory.createControllerModel( controllerGrip ) );
-				scene.add( controllerGrip );
-
-				window.addEventListener( 'resize', onWindowResize );
-
-				//
-
-				document.body.appendChild( VRButton.createButton( renderer ) );
-
-			}
-
-			function buildController( data ) {
-
-				let geometry, material;
-
-				switch ( data.targetRayMode ) {
-
-					case 'tracked-pointer':
-
-						geometry = new THREE.BufferGeometry();
-						geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 1 ], 3 ) );
-						geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.5, 0.5, 0.5, 0, 0, 0 ], 3 ) );
-
-						material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending } );
-
-						return new THREE.Line( geometry, material );
-
-					case 'gaze':
-
-						geometry = new THREE.RingGeometry( 0, 0, 32 ).translate( 0, 0, - 1 );
-						material = new THREE.MeshBasicMaterial( { opacity: 0, transparent: true } );
-						return new THREE.Mesh( geometry, material );
-
-				}
-
+				camera.aspect = window.innerWidth / (window.innerHeight*2);
+				camera.updateProjectionMatrix();
 			}
 
 			function onWindowResize() {
 
-				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.aspect = window.innerWidth / (window.innerHeight/2);
 				camera.updateProjectionMatrix();
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( window.innerWidth/2, window.innerHeight );
+				renderer2.setSize( window.innerWidth/2, window.innerHeight );
 
 			}
-
-			//
 
 			function animate() {
 
 				renderer.setAnimationLoop( render );
+				renderer2.setAnimationLoop( render );
 
 			}
 
 			function render() {
 				renderer.render( scene, camera );
+				renderer2.render( scene, camera );
 			}
 
 		</script>
