@@ -1,7 +1,7 @@
 import {
 	Curve,
 	Vector3
-} from '../../../three.module.js';
+} from '../../three.module.js';
 
 import { ParametricGeometry } from './ParametricGeometry.js';
 
