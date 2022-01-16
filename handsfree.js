@@ -4440,7 +4440,11 @@
         // The video element to hold the webcam stream
         $el: null,
         width: 1280,
-        height: 720
+        height: 720,
+
+        facingMode: {
+          exact: 'environment'
+        }
       },
       // The wrapping element
       wrap: {

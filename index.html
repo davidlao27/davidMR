@@ -52,11 +52,33 @@
 				);
 				scene.add( room );
 
-                const cube = new THREE.Mesh( new THREE.BoxGeometry( 3.5, 0.2, 2 ), new THREE.MeshStandardMaterial( {color: 0} ) );
-                cube.position.y = 0.5;
-                cube.position.z = -1;
+                const tabel = new THREE.Mesh( new THREE.BoxGeometry( 3.5, 0.2, 2 ), new THREE.MeshStandardMaterial( {color: 0} ) );
+                tabel.position.y = 0.5;
+                tabel.position.z = -1;
 
-                scene.add( cube );
+                scene.add( tabel );
+
+				//HANDSFREE MODULE//
+            const handsfree = new Handsfree({ hands: true })
+            handsfree.start();
+
+            // From an event
+            document.addEventListener('handsfree-data', event => {
+                const data = event.detail;
+                if (!data.hands) return
+                
+                if (data.hands.landmarksVisible[0] && data.hands.landmarksVisible[1]) {
+            
+                // Left hand, person #1
+                console.log(handsfree.data.hands.landmarks[0]);
+            
+                // Right hand, person #1
+                console.log(handsfree.data.hands.landmarks[1]);
+
+				tabel.material.color.set(0xFFFFFF);
+        		}
+    		})
+			//HANDSFREE MODULE//
 
 				scene.add( new THREE.HemisphereLight( 0x606060, 0x404040 ) );
 
@@ -166,25 +188,5 @@
 			}
 
 		</script>
-
-        <script>
-            const handsfree = new Handsfree({ hands: true })
-            handsfree.start();
-
-            // From an event
-            document.addEventListener('handsfree-data', event => {
-                const data = event.detail;
-                if (!data.hands) return
-                
-                if (data.hands.landmarksVisible[0] && data.hands.landmarksVisible[1]) {
-            
-                // Left hand, person #1
-                console.log(handsfree.data.hands.landmarks[0]);
-            
-                // Right hand, person #1
-                console.log(handsfree.data.hands.landmarks[1]);
-        }
-    })
-        </script>
 	</body>
 </html>
