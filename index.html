@@ -25,13 +25,21 @@
 		</style>
 	</head>
 	<body>
-		<img src="helmet.png", width="100%" height="115%" style="z-index: 100; position: absolute; top: -7.5%;">
+		<img src="helmet.png", width="100%" height="120%" style="z-index: 100; position: absolute; top: -10%;">
 		<div class="container">
 			<div id="leye"></div>
 			<div id="reye"></div>
 		</div>
 			
 		<script type="module">
+			addEventListener("click", function() {
+    			var el = document.documentElement, rfs =
+               	el.requestFullScreen
+            	|| el.webkitRequestFullScreen
+            	|| el.mozRequestFullScreen;
+    		
+				rfs.call(el);
+			});
 
 			import * as THREE from './three.module.js';
 
@@ -77,17 +85,17 @@
 
                 scene.add( tabel );
 
-				const lh = new THREE.Mesh( new THREE.BoxGeometry( 0.5, 0.5, 0.5 ), new THREE.MeshStandardMaterial( {color: 0x007700} ) );
+				const lh = new THREE.Mesh( new THREE.SphereGeometry( 0.25, 10, 7 ), new THREE.MeshStandardMaterial( {color: 0xE8BEAC} ) );
                 lh.position.x = -0.7;
 				lh.position.y = 1.1;
-                lh.position.z = 0.7;
+                lh.position.z = 0.5;
 
                 scene.add( lh );
 
-				const rh = new THREE.Mesh( new THREE.BoxGeometry( 0.5, 0.5, 0.5 ), new THREE.MeshStandardMaterial( {color: 0x007700} ) );
+				const rh = new THREE.Mesh( new THREE.SphereGeometry( 0.25, 10, 8 ), new THREE.MeshStandardMaterial( {color: 0xE8BEAC} ) );
                 rh.position.x = 0.7;
 				rh.position.y = 1.1;
-                rh.position.z = 0.7;
+                rh.position.z = 0.5;
 
                 scene.add( rh );
 
@@ -107,7 +115,7 @@
 
 function deviceOrientationHandler(tiltX, tiltY){
 
-      camera.rotation.x = (THREE.MathUtils.degToRad(tiltX)+80)*-1;
+      camera.rotation.x = (THREE.MathUtils.degToRad(tiltX)+70)*-1;
       camera.rotation.y = THREE.MathUtils.degToRad(tiltY);
 }
 
@@ -164,15 +172,14 @@ function deviceOrientationHandler(tiltX, tiltY){
 				camera.updateProjectionMatrix();
 			}
 
-			function onWindowResize() {
+		//	window.addEventListener("resize", () => {
+		//		onWindowResize();
+		//	});
 
-				camera.aspect = window.innerWidth / (window.innerHeight/2);
-				camera.updateProjectionMatrix();
-
-				renderer.setSize( window.innerWidth/2, window.innerHeight );
-				renderer2.setSize( window.innerWidth/2, window.innerHeight );
-
-			}
+		//	function onWindowResize() {
+		//		camera.aspect = window.innerWidth / window.innerHeight;
+		//		camera.updateProjectionMatrix();
+		//	}
 
 			function animate() {
 
