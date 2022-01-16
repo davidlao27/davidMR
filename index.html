@@ -172,14 +172,18 @@ function deviceOrientationHandler(tiltX, tiltY){
 				camera.updateProjectionMatrix();
 			}
 
-		//	window.addEventListener("resize", () => {
-		//		onWindowResize();
-		//	});
+			window.addEventListener('resize', function () {
 
-		//	function onWindowResize() {
-		//		camera.aspect = window.innerWidth / window.innerHeight;
-		//		camera.updateProjectionMatrix();
-		//	}
+var width = window.innerWidth;
+var height = window.innerHeight;
+
+renderer.setSize(width, height);
+
+camera.aspect = width / height;
+
+camera.updateProjectionMatrix();
+
+});
 
 			function animate() {
 
