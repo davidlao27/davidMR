@@ -72,6 +72,14 @@
 
                 scene.add( rh );
 
+				let gyroscope = new Gyroscope({frequency: 60});
+gyroscope.addEventListener('reading', e => {
+	camera.rotation.x = THREE.MathUtils.degToRad(gyroscope.x);
+	camera.rotation.y = THREE.MathUtils.degToRad(gyroscope.y);
+	camera.rotation.z = THREE.MathUtils.degToRad(gyroscope.z);
+});
+gyroscope.start();
+
 				//HANDSFREE MODULE//
             const handsfree = new Handsfree({ hands: true })
             handsfree.start();
@@ -86,14 +94,13 @@
                 // Left hand, person #1
 				lh.position.x = (handsfree.data.hands.landmarks[0][21].x*-1)+0.5;
 				lh.position.y = (handsfree.data.hands.landmarks[0][21].y*-1)+2;
-				lh.position.z = handsfree.data.hands.landmarks[0][8].z+1;
 
                 // Right hand, person #1
 				rh.position.x = (handsfree.data.hands.landmarks[1][21].x*-1)+0.75;
 				rh.position.y = (handsfree.data.hands.landmarks[1][21].y*-1)+2;
-				rh.position.z = handsfree.data.hands.landmarks[1][8].z+1;
 
 				tabel.material.color.set(0xFFFFFF);
+				console.log(handsfree.data.hands.pinchState)
         		}
     		})
 			//HANDSFREE MODULE//
