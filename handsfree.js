@@ -4440,11 +4440,7 @@
         // The video element to hold the webcam stream
         $el: null,
         width: 1280,
-        height: 720,
-
-        facingMode: {
-          exact: 'environment'
-        }
+        height: 720
       },
       // The wrapping element
       wrap: {
@@ -9965,7 +9961,7 @@
             navigator.mediaDevices.getUserMedia({
               audio: false,
               video: {
-                facingMode: 'user',
+                facingMode: 'environment',
                 width: this.debug.$video.width,
                 height: this.debug.$video.height
               }
