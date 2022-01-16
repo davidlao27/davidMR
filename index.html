@@ -72,13 +72,25 @@
 
                 scene.add( rh );
 
-				let gyroscope = new Gyroscope({frequency: 60});
-gyroscope.addEventListener('reading', e => {
-	camera.rotation.x = THREE.MathUtils.degToRad(gyroscope.x);
-	camera.rotation.y = THREE.MathUtils.degToRad(gyroscope.y);
-	camera.rotation.z = THREE.MathUtils.degToRad(gyroscope.z);
-});
-gyroscope.start();
+				if (window.DeviceOrientationEvent) {
+    window.addEventListener('deviceorientation', function (eventData) {
+
+
+        var tiltX = Math.round(eventData.gamma * 2 );
+
+
+        var tiltY =  Math.round(eventData.beta * 2);
+
+        deviceOrientationHandler(tiltX,tiltY);
+
+    }, false);
+}
+
+function deviceOrientationHandler(tiltX, tiltY){
+
+      camera.rotation.x = tiltX;
+      camera.rotation.y = tiltY;
+}
 
 				//HANDSFREE MODULE//
             const handsfree = new Handsfree({ hands: true })
