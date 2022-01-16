@@ -58,6 +58,20 @@
 
                 scene.add( tabel );
 
+				const lh = new THREE.Mesh( new THREE.BoxGeometry( 0.5, 0.5, 0.5 ), new THREE.MeshStandardMaterial( {color: 0x007700} ) );
+                lh.position.x = -0.7;
+				lh.position.y = 1.1;
+                lh.position.z = 0.7;
+
+                scene.add( lh );
+
+				const rh = new THREE.Mesh( new THREE.BoxGeometry( 0.5, 0.5, 0.5 ), new THREE.MeshStandardMaterial( {color: 0x007700} ) );
+                rh.position.x = 0.7;
+				rh.position.y = 1.1;
+                rh.position.z = 0.7;
+
+                scene.add( rh );
+
 				//HANDSFREE MODULE//
             const handsfree = new Handsfree({ hands: true })
             handsfree.start();
@@ -70,10 +84,14 @@
                 if (data.hands.landmarksVisible[0] && data.hands.landmarksVisible[1]) {
             
                 // Left hand, person #1
-                console.log(handsfree.data.hands.landmarks[0]);
-            
+				lh.position.x = (handsfree.data.hands.landmarks[0][21].x*-1)+0.5;
+				lh.position.y = (handsfree.data.hands.landmarks[0][21].y*-1)+2;
+				lh.position.z = handsfree.data.hands.landmarks[0][8].z+1;
+
                 // Right hand, person #1
-                console.log(handsfree.data.hands.landmarks[1]);
+				rh.position.x = (handsfree.data.hands.landmarks[1][21].x*-1)+0.75;
+				rh.position.y = (handsfree.data.hands.landmarks[1][21].y*-1)+2;
+				rh.position.z = handsfree.data.hands.landmarks[1][8].z+1;
 
 				tabel.material.color.set(0xFFFFFF);
         		}
