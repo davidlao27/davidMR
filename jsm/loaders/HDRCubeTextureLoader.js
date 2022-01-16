@@ -8,7 +8,7 @@ import {
 	LinearFilter,
 	Loader,
 	RGBFormat
-} from '../../../build/three.module.js';
+} from '../../three.module.js';
 import { RGBELoader } from '../loaders/RGBELoader.js';
 
 class HDRCubeTextureLoader extends Loader {
