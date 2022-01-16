@@ -88,8 +88,8 @@
 
 function deviceOrientationHandler(tiltX, tiltY){
 
-      camera.rotation.x = tiltX;
-      camera.rotation.y = tiltY;
+      camera.rotation.x = THREE.MathUtils.degToRad(tiltX);
+      camera.rotation.y = THREE.MathUtils.degToRad(tiltY);
 }
 
 				//HANDSFREE MODULE//
